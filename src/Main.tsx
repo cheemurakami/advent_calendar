@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { styled } from "styled-components";
-import Treat from './Treat'
+import Treat from "./Treat";
 
 const Main: React.FC = () => {
   const weekCols = {
@@ -15,7 +15,20 @@ const Main: React.FC = () => {
 
   const [openedDays, setOpenedDays] = useState<any>([]);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
-  const [selectedDay, setSelectedDay] = useState<number | null>(null)
+  const [selectedDay, setSelectedDay] = useState<number | null>(null);
+  const [gifURLs, setGifURLs] = useState<any>([]);
+  const [gif, setGif] = useState<string>('')
+
+  useEffect(() => {
+    fetchUrls()
+  }, []);
+
+  const fetchUrls = async () => {
+    const data = await fetch(`https://api.giphy.com/v1/gifs/search?api_key=${process.env.REACT_APP_API_KEY}&q=christmas`)
+
+    const resp = await data.json()
+    setGifURLs(resp.data)
+  }
 
   const WeekHeader: React.FC = () => {
     const weeks = Object.keys(weekCols);
@@ -62,16 +75,14 @@ const Main: React.FC = () => {
   };
 
   const handleClick = (day: number | null) => {
-    console.log({ day });
-
     if (day !== null) {
       setOpenedDays([...openedDays, day]);
-      setModalOpen(true)
-      setSelectedDay(day)
+      setModalOpen(true);
+      setSelectedDay(day);
+      const url = gifURLs[day - 1].images.original.url
+      setGif(url);
     }
   };
-
-  console.log({ openedDays });
 
   return (
     <>
@@ -84,13 +95,14 @@ const Main: React.FC = () => {
           <Days></Days>
         </CalenderContainer>
       </Container>
-      {modalOpen &&
+      {modalOpen && (
         <Treat
           modalOpen={modalOpen}
           setModalOpen={setModalOpen}
           selectedDay={selectedDay}
+          gif={gif}
         />
-      }
+      )}
     </>
   );
 };
