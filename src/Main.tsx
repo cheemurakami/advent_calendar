@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { styled } from "styled-components";
+import Treat from './Treat'
 
 const Main: React.FC = () => {
   const weekCols = {
@@ -11,6 +12,10 @@ const Main: React.FC = () => {
     Fri: 5,
     Sat: 6,
   };
+
+  const [openedDays, setOpenedDays] = useState<any>([]);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [selectedDay, setSelectedDay] = useState<number | null>(null)
 
   const WeekHeader: React.FC = () => {
     const weeks = Object.keys(weekCols);
@@ -25,27 +30,48 @@ const Main: React.FC = () => {
 
   const Days: React.FC = () => {
     // TODO: create some func to generate weeks and days
-    const firstWeek = [null, null, null, null, null, 1, 2]
-    const secondWeek = [3, 4, 5, 6, 7, 8, 9]
-    const thirdWeek = [10, 11, 12, 13, 14, 15, 16]
-    const fourthWeek = [17, 18, 19, 20, 21, 22, 23]
-    const fifthWeek = [24, 25, 26, 27, 28, 29, 30]
-    const sixthWeek = [31, null, null, null, null, null, null]
+    const firstWeek = [null, null, null, null, null, 1, 2];
+    const secondWeek = [3, 4, 5, 6, 7, 8, 9];
+    const thirdWeek = [10, 11, 12, 13, 14, 15, 16];
+    const fourthWeek = [17, 18, 19, 20, 21, 22, 23];
+    const fifthWeek = [24, 25, 26, 27, 28, 29, 30];
+    const sixthWeek = [31, null, null, null, null, null, null];
 
-    const allWeeks = [firstWeek, secondWeek, thirdWeek, fourthWeek, fifthWeek, sixthWeek]
+    const allWeeks = [
+      firstWeek,
+      secondWeek,
+      thirdWeek,
+      fourthWeek,
+      fifthWeek,
+      sixthWeek,
+    ];
 
     return (
       <>
-        {allWeeks.map((weeks) =>
+        {allWeeks.map((weeks) => (
           <Row>
             {weeks.map((day, i) => (
-              <Grid key={i}>{day}</Grid>
+              <Grid key={i} onClick={() => handleClick(day)}>
+                {day}
+              </Grid>
             ))}
           </Row>
-        )}
+        ))}
       </>
     );
-  }
+  };
+
+  const handleClick = (day: number | null) => {
+    console.log({ day });
+
+    if (day !== null) {
+      setOpenedDays([...openedDays, day]);
+      setModalOpen(true)
+      setSelectedDay(day)
+    }
+  };
+
+  console.log({ openedDays });
 
   return (
     <>
@@ -58,6 +84,13 @@ const Main: React.FC = () => {
           <Days></Days>
         </CalenderContainer>
       </Container>
+      {modalOpen &&
+        <Treat
+          modalOpen={modalOpen}
+          setModalOpen={setModalOpen}
+          selectedDay={selectedDay}
+        />
+      }
     </>
   );
 };
@@ -86,14 +119,15 @@ const MonthHeader = styled.div`
   font-size: 24px;
   font-weight: 600;
   color: red;
-`
+`;
 
 const Row = styled.div`
   display: flex;
   justify-content: space-around;
   align-items: center;
   height: 10%;
-  width: 100%;`;
+  width: 100%;
+`;
 
 const Grid = styled.div`
   border: 1px solid gray;
