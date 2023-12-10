@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Typography, Box } from "@material-ui/core/";
+import { styled } from 'styled-components'
 
 interface Props {
   modalOpen: boolean;
   setModalOpen: (open: boolean) => void;
   selectedDay: number | null;
   gif: string;
+  showGif: boolean;
 }
 
 const Treat = (props: Props) => {
-  const { modalOpen, setModalOpen, selectedDay, gif } = props;
+  const { modalOpen, setModalOpen, selectedDay, gif, showGif } = props;
   const [daysToChristmas, setDaysToChristmas] = useState<number | null>(null);
 
   useEffect(() => {
@@ -46,10 +48,23 @@ const Treat = (props: Props) => {
         <Typography id="modal-modal-title" variant="h6" component="h2">
           {daysToChristmas} more days till Santa!
         </Typography>
-        <img src={gif} alt='gif' />
+        {showGif && (
+          <ImageContainer>
+            <Image src={gif} alt='gif' />
+          </ImageContainer>
+        )}
       </Box>
     </Modal>
   );
 };
+
+const ImageContainer = styled.div`
+  display: flex;
+  height: 100%;
+  width: 80%;
+`
+const Image = styled.img`
+  max-width: 100%;
+`
 
 export default Treat;

@@ -18,6 +18,8 @@ const Main: React.FC = () => {
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [gifURLs, setGifURLs] = useState<any>([]);
   const [gif, setGif] = useState<string>('')
+  const [today, setToday] = useState<number | null>(null)
+  const [showGif, setShowGif] = useState<boolean>(false)
 
   useEffect(() => {
     fetchUrls()
@@ -29,6 +31,13 @@ const Main: React.FC = () => {
     const resp = await data.json()
     setGifURLs(resp.data)
   }
+
+  useEffect(() => {
+    const day = new Date().getUTCDate();
+    if (day <= 25) {
+      setToday(day)
+    }
+  }, [])
 
   const WeekHeader: React.FC = () => {
     const weeks = Object.keys(weekCols);
@@ -75,7 +84,13 @@ const Main: React.FC = () => {
   };
 
   const handleClick = (day: number | null) => {
-    if (day !== null) {
+    if (day && today && (day <= today)) {
+      setShowGif(true)
+    } else {
+      setShowGif(false)
+    }
+
+    if (day) {
       setOpenedDays([...openedDays, day]);
       setModalOpen(true);
       setSelectedDay(day);
@@ -101,6 +116,7 @@ const Main: React.FC = () => {
           setModalOpen={setModalOpen}
           selectedDay={selectedDay}
           gif={gif}
+          showGif={showGif}
         />
       )}
     </>
