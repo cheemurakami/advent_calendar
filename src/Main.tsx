@@ -20,6 +20,7 @@ const Main: React.FC = () => {
   const [gif, setGif] = useState<string>('')
   const [today, setToday] = useState<number | null>(null)
   const [showGif, setShowGif] = useState<boolean>(false)
+  const [beforeChristmas, setBeforeChristmas] = useState<boolean>(false)
 
   useEffect(() => {
     fetchUrls()
@@ -94,6 +95,7 @@ const Main: React.FC = () => {
       setOpenedDays([...openedDays, day]);
       setModalOpen(true);
       setSelectedDay(day);
+      day > 25 ? setBeforeChristmas(false) : setBeforeChristmas(true)
       const url = gifURLs[day - 1].images.original.url
       setGif(url);
     }
@@ -117,6 +119,7 @@ const Main: React.FC = () => {
           selectedDay={selectedDay}
           gif={gif}
           showGif={showGif}
+          beforeChristmas={beforeChristmas}
         />
       )}
     </>

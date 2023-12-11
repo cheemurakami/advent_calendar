@@ -8,17 +8,38 @@ interface Props {
   selectedDay: number | null;
   gif: string;
   showGif: boolean;
+  beforeChristmas: boolean;
 }
 
 const Treat = (props: Props) => {
-  const { modalOpen, setModalOpen, selectedDay, gif, showGif } = props;
+  const {
+    modalOpen,
+    setModalOpen,
+    selectedDay,
+    gif,
+    showGif,
+    beforeChristmas
+  } = props;
+
   const [daysToChristmas, setDaysToChristmas] = useState<number | null>(null);
 
   useEffect(() => {
-    if (selectedDay) {
+    if (selectedDay && beforeChristmas) {
       setDaysToChristmas(25 - selectedDay)
     }
-  }, [selectedDay]);
+  }, [selectedDay, beforeChristmas]);
+
+  const ModalText: React.FC = () => {
+    const text = beforeChristmas ?
+      `${daysToChristmas} more days till Santa!` :
+      'Wish you a happy new year!'
+
+    return (
+      <Typography id="modal-modal-title" variant="h6" component="h2">
+        {text}
+      </Typography>
+    )
+  }
 
   return (
     <Modal
@@ -45,9 +66,7 @@ const Treat = (props: Props) => {
           alignItems: "center",
         }}
       >
-        <Typography id="modal-modal-title" variant="h6" component="h2">
-          {daysToChristmas} more days till Santa!
-        </Typography>
+        <ModalText />
         {showGif && (
           <ImageContainer>
             <Image src={gif} alt='gif' />
@@ -60,6 +79,7 @@ const Treat = (props: Props) => {
 
 const ImageContainer = styled.div`
   display: flex;
+  justify-content: center;
   height: 100%;
   width: 80%;
 `
