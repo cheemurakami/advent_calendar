@@ -15,30 +15,29 @@ const Main: React.FC = () => {
 
   const [openedDays, setOpenedDays] = useState<any>([]);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
-  const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [gifURLs, setGifURLs] = useState<any>([]);
-  const [gif, setGif] = useState<string>('')
-  const [today, setToday] = useState<number | null>(null)
-  const [showGif, setShowGif] = useState<boolean>(false)
-  const [beforeChristmas, setBeforeChristmas] = useState<boolean>(false)
+  const [gif, setGif] = useState<string>("");
+  const [today, setToday] = useState<number | null>(null);
+  const [showGif, setShowGif] = useState<boolean>(false);
+  const [modalText, setModalText] = useState<string>("");
 
   useEffect(() => {
-    fetchUrls()
+    fetchUrls();
   }, []);
 
   const fetchUrls = async () => {
-    const data = await fetch(`https://api.giphy.com/v1/gifs/search?api_key=${process.env.REACT_APP_API_KEY}&q=christmas`)
+    const data = await fetch(
+      `https://api.giphy.com/v1/gifs/search?api_key=${process.env.REACT_APP_API_KEY}&q=christmas`,
+    );
 
-    const resp = await data.json()
-    setGifURLs(resp.data)
-  }
+    const resp = await data.json();
+    setGifURLs(resp.data);
+  };
 
   useEffect(() => {
     const day = new Date().getUTCDate();
-    if (day <= 25) {
-      setToday(day)
-    }
-  }, [])
+    setToday(day);
+  }, []);
 
   const WeekHeader: React.FC = () => {
     const weeks = Object.keys(weekCols);
@@ -84,22 +83,43 @@ const Main: React.FC = () => {
     );
   };
 
-  const handleClick = (day: number | null) => {
-    if (day && today && (day <= today)) {
-      setShowGif(true)
-    } else {
-      setShowGif(false)
-    }
-
-    if (day) {
-      setOpenedDays([...openedDays, day]);
+  const handleClick = (clickedDay: number | null) => {
+    if (clickedDay) {
+      setOpenedDays([...openedDays, clickedDay]);
+      generateModalText(clickedDay);
+      canShowGif(clickedDay)
       setModalOpen(true);
-      setSelectedDay(day);
-      day > 25 ? setBeforeChristmas(false) : setBeforeChristmas(true)
-      const url = gifURLs[day - 1].images.original.url
-      setGif(url);
     }
   };
+
+  const generateModalText = (clickedDay: number) => {
+    switch (true) {
+      case clickedDay === 25:
+        setModalText("Merry Christmas!");
+        break;
+
+      case clickedDay === 24:
+        setModalText("Merry Christmas Eve!");
+        break;
+
+      case clickedDay < 24:
+        setModalText(`${25 - clickedDay} more days till Santa!`);
+        break;
+
+      case clickedDay > 25:
+        setModalText("Wish you a Happy New Year!");
+        break;
+    }
+  };
+
+  const canShowGif = (clickedDay: number) => {
+    const url = gifURLs[clickedDay - 1].images.original.url;
+    setGif(url);
+
+    if (today) {
+      clickedDay <= today ? setShowGif(true) : setShowGif(false);
+    }
+  }
 
   return (
     <>
@@ -116,10 +136,9 @@ const Main: React.FC = () => {
         <Treat
           modalOpen={modalOpen}
           setModalOpen={setModalOpen}
-          selectedDay={selectedDay}
           gif={gif}
           showGif={showGif}
-          beforeChristmas={beforeChristmas}
+          modalText={modalText}
         />
       )}
     </>

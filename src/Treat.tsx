@@ -1,45 +1,22 @@
-import React, { useEffect, useState } from "react";
 import { Modal, Typography, Box } from "@material-ui/core/";
 import { styled } from 'styled-components'
 
 interface Props {
   modalOpen: boolean;
   setModalOpen: (open: boolean) => void;
-  selectedDay: number | null;
   gif: string;
   showGif: boolean;
-  beforeChristmas: boolean;
+  modalText: string;
 }
 
 const Treat = (props: Props) => {
   const {
     modalOpen,
     setModalOpen,
-    selectedDay,
     gif,
     showGif,
-    beforeChristmas
+    modalText,
   } = props;
-
-  const [daysToChristmas, setDaysToChristmas] = useState<number | null>(null);
-
-  useEffect(() => {
-    if (selectedDay && beforeChristmas) {
-      setDaysToChristmas(25 - selectedDay)
-    }
-  }, [selectedDay, beforeChristmas]);
-
-  const ModalText: React.FC = () => {
-    const text = beforeChristmas ?
-      `${daysToChristmas} more days till Santa!` :
-      'Wish you a happy new year!'
-
-    return (
-      <Typography id="modal-modal-title" variant="h6" component="h2">
-        {text}
-      </Typography>
-    )
-  }
 
   return (
     <Modal
@@ -66,7 +43,9 @@ const Treat = (props: Props) => {
           alignItems: "center",
         }}
       >
-        <ModalText />
+        <Typography id="modal-modal-title" variant="h6" component="h2">
+          {modalText}
+        </Typography>
         {showGif && (
           <ImageContainer>
             <Image src={gif} alt='gif' />
