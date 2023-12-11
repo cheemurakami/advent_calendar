@@ -101,22 +101,35 @@ const Main: React.FC = () => {
   };
 
   const generateModalText = (clickedDay: number) => {
-    switch (true) {
-      case clickedDay === 25:
-        setModalText("Merry Christmas!");
-        break;
+    if (today) {
+      switch (true) {
+        case clickedDay === 25 && clickedDay === today:
+          setModalText("Merry Christmas!");
+          break;
 
-      case clickedDay === 24:
-        setModalText("Merry Christmas Eve!");
-        break;
+        case clickedDay === 24 && clickedDay === today:
+          setModalText("Merry Christmas Eve!");
+          break;
 
-      case clickedDay < 24:
-        setModalText(`${25 - clickedDay} more days till Santa!`);
-        break;
+        case clickedDay < 25 && clickedDay <= today:
+          setModalText(`${25 - clickedDay} more days till Santa!`);
+          break;
 
-      case clickedDay > 25:
-        setModalText("Wish you a Happy New Year!");
-        break;
+        case clickedDay < 25 && clickedDay > today:
+          let text = ''
+          const daysToWait = clickedDay - today
+          if (daysToWait === 1) {
+            text = `Please wait ${daysToWait} more day to open!`
+          } else {
+            text = `Please wait ${daysToWait} more days to open!`
+          }
+          setModalText(text);
+          break;
+
+        case clickedDay > 25:
+          setModalText("Wish you a Happy New Year!");
+          break;
+      }
     }
   };
 
