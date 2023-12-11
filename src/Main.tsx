@@ -2,6 +2,10 @@ import React, { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import Treat from "./Treat";
 
+interface GridTypes {
+  opened?: boolean;
+}
+
 const Main: React.FC = () => {
   const weekCols = {
     Sun: 0,
@@ -70,11 +74,15 @@ const Main: React.FC = () => {
 
     return (
       <>
-        {allWeeks.map((weeks) => (
-          <Row>
+        {allWeeks.map((weeks, i) => (
+          <Row key={i}>
             {weeks.map((day, i) => (
-              <Grid key={i} onClick={() => handleClick(day)}>
-                {day}
+              <Grid
+                key={i}
+                onClick={() => handleClick(day)}
+                opened={openedDays.includes(day)}
+              >
+                <Day>{day}</Day>
               </Grid>
             ))}
           </Row>
@@ -85,7 +93,7 @@ const Main: React.FC = () => {
 
   const handleClick = (clickedDay: number | null) => {
     if (clickedDay) {
-      setOpenedDays([...openedDays, clickedDay]);
+      getOpenedDays(clickedDay)
       generateModalText(clickedDay);
       canShowGif(clickedDay)
       setModalOpen(true);
@@ -118,6 +126,12 @@ const Main: React.FC = () => {
 
     if (today) {
       clickedDay <= today ? setShowGif(true) : setShowGif(false);
+    }
+  }
+
+  const getOpenedDays = (clickedDay: number) => {
+    if (today && clickedDay <= today && !openedDays.includes(clickedDay)) {
+      setOpenedDays([...openedDays, clickedDay])
     }
   }
 
@@ -179,12 +193,17 @@ const Row = styled.div`
   width: 100%;
 `;
 
-const Grid = styled.div`
+const Day = styled.span`
+  cursor: pointer;
+`;
+
+const Grid = styled.div<GridTypes>`
   border: 1px solid gray;
+  background-color: ${({ opened }) => (opened ? '#C28D6A' : '#fff')};
   height: 100%;
   width: 30%;
   text-align: center;
-  line-height: 4;
+  line-height: 4
 `;
 
 export default Main;
